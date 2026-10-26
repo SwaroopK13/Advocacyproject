@@ -116,7 +116,27 @@ button:focus-visible, input:focus-visible, a:focus-visible {
 .leaflet-popup-content { font-family: "DM Sans", sans-serif; font-size: 12px; line-height: 1.55; }
 .leaflet-popup-content strong { font-size: 13px; }
 .leaflet-popup-content small { color: #859098; }
-.sample-marker { display: grid; width: 30px; height: 30px; place-items: center; border: 2px solid #fff; border-radius: 50%; background: #4388b8; color: #fff; font: 700 17px/1 "DM Sans", sans-serif; box-shadow: 0 2px 8px #24373d45; }
+.facility-marker { display: grid; width: 30px; height: 30px; place-items: center; border: 2px solid #fff; border-radius: 50%; color: #fff; font: 700 17px/1 "DM Sans", sans-serif; box-shadow: 0 2px 8px #24373d45; }
+.facility-marker--specialty { background: #4388b8; }
+.facility-marker--community { background: #34877f; font-size: 12px; }
+
+.map-research-card { position: absolute; z-index: 600; bottom: 21px; left: 22px; width: min(380px, calc(100% - 44px)); max-height: min(48vh, 310px); overflow: auto; padding: 13px 15px; border: 1px solid #e8ebea; border-radius: 11px; background: #ffffffed; box-shadow: 0 4px 18px rgb(35 50 50 / 10%); backdrop-filter: blur(8px); }
+.research-card-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; color: #8b969b; font-size: 8px; font-weight: 700; letter-spacing: 1px; }
+.research-card-header span:last-child { overflow: hidden; color: #39877e; font-size: 9px; letter-spacing: 0; text-overflow: ellipsis; white-space: nowrap; }
+.research-metric { display: block; color: #263942; font: 700 22px/1.2 "Manrope", sans-serif; letter-spacing: -.5px; }
+.research-label { margin: 3px 0 8px; color: #52646b; font-size: 10px; font-weight: 600; }
+.research-details { display: grid; gap: 4px; margin: 0 0 8px; padding-left: 15px; color: #65737a; font-size: 9px; line-height: 1.4; }
+.research-caveat { margin: 0 0 6px; color: #806b47; font-size: 9px; line-height: 1.45; }
+.research-source { margin: 0; color: #929ba1; font-size: 8px; line-height: 1.4; }
+.research-empty { margin: 0; color: #65737a; font-size: 10px; }
+.clinic-key { display: none; gap: 6px; margin-top: 9px; padding-top: 8px; border-top: 1px solid #edf0f1; }
+.clinic-key.is-visible { display: grid; }
+.clinic-key-item { display: flex; align-items: center; gap: 7px; color: #65737a; font-size: 9px; }
+.clinic-key-marker { display: grid; width: 17px; height: 17px; place-items: center; border-radius: 50%; color: #fff; font-size: 12px; font-weight: 700; }
+.specialty-key { background: #4388b8; }
+.community-key { background: #34877f; font-size: 8px; }
+.filter-unavailable { max-width: 260px; margin: -2px 0 8px; line-height: 1.45; }
+.filter-chip:disabled { opacity: .48; cursor: not-allowed; }
 
 .map-search { position: absolute; z-index: 600; top: 20px; left: 22px; display: flex; align-items: center; width: min(355px, calc(100% - 140px)); height: 45px; padding: 0 12px; border: 1px solid #e8ebea; border-radius: 10px; background: #fff; box-shadow: 0 3px 14px rgb(32 47 50 / 10%); }
 .search-icon { display: grid; margin-right: 9px; color: #79858d; }
@@ -191,7 +211,7 @@ button:focus-visible, input:focus-visible, a:focus-visible {
   .map-top-right { top: 16px; right: 12px; gap: 5px; }
   .map-action { width: 34px; height: 34px; }
   .map-status-card { top: 67px; left: 16px; }
-  .map-legend { right: 12px; bottom: 17px; width: 193px; padding: 10px 11px; }
+  .map-research-card { bottom: 17px; left: 12px; width: calc(100% - 24px); max-height: 54%; padding: 10px 12px; }
   .leaflet-control-zoom { margin: 0 11px 79px 0 !important; }
   .map-toast { top: 115px; }
 }

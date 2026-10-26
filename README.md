@@ -12,9 +12,11 @@ python3 -m http.server 8000
 
 Then visit `http://localhost:8000`.
 
-## Prototype notes
+## Data notes
 
 - Map tiles are provided by OpenStreetMap and require an internet connection.
-- Layer geometry and clinic pins are illustrative demo placeholders. They are not measured data or actual clinic locations.
-- Diabetes burden, SVI, shortage-area, and specialty-access overlays can be replaced with the researched geography and measures when available. The current sample metrics are only used to demonstrate layer interaction.
-- The layer controls are independently switchable. Quick filters combine using AND logic; reset restores the initial diabetes layer and clears filters.
+- The research summary includes Dallas County-level diabetes prevalence (12.1%), SVI percentiles, and transportation information, plus six listed healthcare facilities. It does not provide tract-level measure tables or shortage-area boundary files.
+- County-level metrics are shown as summaries, not as tract-level shaded areas. Quick filters remain unavailable until tract-level records are added.
+- Facility markers use approximate address points returned by the U.S. Census Geocoder. The research brief does not confirm AI-based diabetic eye screening at any facility.
+- Primary-care shortage boundaries, tract-level diabetes and SVI data, and calculated specialty-care travel distances require the corresponding source datasets before those spatial layers can be mapped.
+- Reset restores the diabetes summary and hides the clinic markers.

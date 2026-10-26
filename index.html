@@ -44,43 +44,43 @@
         <section class="intro">
           <div class="eyebrow"><span class="live-dot"></span> COMMUNITY HEALTH EXPLORER</div>
           <h1>See the bigger<br />health picture.</h1>
-          <p>Explore how diabetes, social needs, and care access intersect across the DFW region.</p>
+          <p>Explore the available Dallas County health indicators and research-listed care locations.</p>
         </section>
 
         <div class="section-heading">
           <h2>Map layers</h2>
           <button class="text-button" id="reset-layers" type="button">Reset</button>
         </div>
-        <p class="section-hint">Choose a layer to explore</p>
+        <p class="section-hint">Choose a layer to review the available findings</p>
 
         <div class="layer-list" id="layer-list">
           <button class="layer-row is-active" type="button" data-layer="diabetes" aria-pressed="true">
             <span class="layer-icon diabetes-icon" aria-hidden="true"><span></span></span>
-            <span class="layer-copy"><strong>Diabetes burden</strong><small>Estimated prevalence</small></span>
+            <span class="layer-copy"><strong>Diabetes burden</strong><small>County prevalence summary</small></span>
             <span class="switch" aria-hidden="true"></span>
           </button>
           <button class="layer-row" type="button" data-layer="svi" aria-pressed="false">
             <span class="layer-icon svi-icon" aria-hidden="true"><span></span></span>
-            <span class="layer-copy"><strong>Social vulnerability</strong><small>Social Vulnerability Index</small></span>
+            <span class="layer-copy"><strong>Social vulnerability</strong><small>County SVI percentiles</small></span>
             <span class="switch" aria-hidden="true"></span>
           </button>
           <button class="layer-row" type="button" data-layer="clinics" aria-pressed="false">
             <span class="layer-icon clinic-icon" aria-hidden="true">
               <svg viewBox="0 0 20 20"><path d="M10 3v14M3 10h14" /></svg>
             </span>
-            <span class="layer-copy"><strong>Clinics &amp; care</strong><small>Healthcare locations</small></span>
+            <span class="layer-copy"><strong>Clinics &amp; care</strong><small>6 research-listed locations</small></span>
             <span class="switch" aria-hidden="true"></span>
           </button>
           <button class="layer-row" type="button" data-layer="shortage" aria-pressed="false">
             <span class="layer-icon shortage-icon" aria-hidden="true"><span></span></span>
-            <span class="layer-copy"><strong>Shortage areas</strong><small>Health professional gaps</small></span>
+            <span class="layer-copy"><strong>Shortage areas</strong><small>Boundaries not provided</small></span>
             <span class="switch" aria-hidden="true"></span>
           </button>
           <button class="layer-row" type="button" data-layer="specialty" aria-pressed="false">
             <span class="layer-icon specialty-icon" aria-hidden="true">
               <svg viewBox="0 0 20 20"><path d="M5 3.5v5a5 5 0 0 0 10 0v-5M10 13.5v3M7 16.5h6M3.5 3.5h3M13.5 3.5h3" /></svg>
             </span>
-            <span class="layer-copy"><strong>Specialty access</strong><small>Diabetes care access</small></span>
+            <span class="layer-copy"><strong>Specialty access</strong><small>County transportation metric</small></span>
             <span class="switch" aria-hidden="true"></span>
           </button>
         </div>
@@ -88,23 +88,24 @@
         <div class="filter-divider"></div>
         <div class="section-heading filter-heading">
           <h2>Quick filters</h2>
-          <span class="filter-count" id="filter-count">0 active</span>
+          <span class="filter-count" id="filter-count">Unavailable</span>
         </div>
+        <p class="section-hint filter-unavailable">Area filters need tract-level records, which are not included in the research PDF.</p>
         <div class="filter-chips" id="filter-chips">
-          <button type="button" class="filter-chip" data-filter="high-need" aria-pressed="false">
+          <button type="button" class="filter-chip" data-filter="high-need" aria-pressed="false" disabled>
             <span class="chip-dot coral"></span>High need
           </button>
-          <button type="button" class="filter-chip" data-filter="care-nearby" aria-pressed="false">
+          <button type="button" class="filter-chip" data-filter="care-nearby" aria-pressed="false" disabled>
             <span class="chip-dot blue"></span>Care nearby
           </button>
-          <button type="button" class="filter-chip" data-filter="limited-access" aria-pressed="false">
+          <button type="button" class="filter-chip" data-filter="limited-access" aria-pressed="false" disabled>
             <span class="chip-dot amber"></span>Limited access
           </button>
         </div>
 
         <div class="sidebar-footer">
-          <span class="demo-badge"><span></span> DEMO MODE</span>
-          <p>Map visuals are illustrative placeholders, not research findings.</p>
+          <span class="demo-badge"><span></span> RESEARCH SUMMARY</span>
+          <p>County statistics are not tract maps. Provider screening status is unverified.</p>
         </div>
       </aside>
 
@@ -132,13 +133,19 @@
           <span class="status-pin" aria-hidden="true"><span></span></span>
           <span><strong>Dallas–Fort Worth</strong><small>Texas, United States</small></span>
           <span class="status-divider"></span>
-          <span class="status-count"><strong id="visible-count">0</strong><small>sample areas</small></span>
+          <span class="status-count"><strong id="visible-count">0</strong><small>provider sites</small></span>
         </div>
 
-        <div class="map-legend">
-          <div class="legend-title"><span>MAP KEY</span><span class="demo-label">ILLUSTRATIVE</span></div>
-          <div class="legend-row"><span class="legend-swatch gradient"></span><span id="legend-layer">Diabetes burden</span><span class="legend-range"><span>Lower</span><span>Higher</span></span></div>
-          <div class="legend-row legend-item clinics-legend"><span class="legend-clinic">+</span><span>Sample clinic locations</span></div>
+        <div class="map-research-card" aria-live="polite">
+          <div class="research-card-header">
+            <span>RESEARCH SUMMARY</span>
+            <span id="legend-layer">Diabetes burden</span>
+          </div>
+          <div id="research-content"></div>
+          <div class="clinic-key clinics-legend">
+            <span class="clinic-key-item"><span class="clinic-key-marker specialty-key">+</span>Retina specialty clinic</span>
+            <span class="clinic-key-item"><span class="clinic-key-marker community-key">●</span>Community health center</span>
+          </div>
         </div>
 
         <div class="map-toast" id="map-toast" role="status" aria-live="polite"></div>

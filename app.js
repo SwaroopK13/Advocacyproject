@@ -7,31 +7,113 @@
     shortage: "Shortage areas",
     specialty: "Specialty access",
   };
-  const layerColors = {
-    diabetes: ["#8eb7a6", "#e4a264", "#d27768"],
-    svi: ["#9fc7bd", "#9d8bc7", "#7460a9"],
-    shortage: ["#f0ca83", "#dd985d", "#c76a57"],
-    specialty: ["#98c9c2", "#5ba69e", "#357c79"],
+  const summaryLayers = ["diabetes", "svi", "shortage", "specialty"];
+  const layerFacts = {
+    diabetes: {
+      headline: "12.1%",
+      label: "Adult diabetes prevalence · Dallas County",
+      details: [
+        "Parkland Diabetes Registry: 54,056 patients in 2021 and 74,282 in 2024 (+37.4%).",
+      ],
+      caveat:
+        "County-level estimate only; tract-level values are not in the research PDF. Registry enrollment is not county prevalence.",
+      source: "CDC PLACES 2023–2024, as reported by RHT Compass; Parkland registry figures in the research brief.",
+    },
+    svi: {
+      headline: "0.89",
+      label: "Overall SVI percentile · Dallas County",
+      details: [
+        "Socioeconomic status: 0.93",
+        "Household composition and disability: 0.72",
+        "Minority status and language: 0.97",
+        "Housing type and transportation: 0.72",
+      ],
+      caveat:
+        "County-level percentiles do not show within-county variation. Tract-level SVI values are not included.",
+      source: "CDC/ATSDR SVI 2022, as reported by RHT Compass.",
+    },
+    shortage: {
+      headline: "Boundary data not provided",
+      label: "No shortage areas are drawn",
+      details: [
+        "The brief points to HRSA and Texas DSHS primary-care designations as sources for official boundaries.",
+        "Primary-care shortage status does not establish an eye-care specialist shortage.",
+      ],
+      caveat: "No designation records or boundary geometry were included in the research PDF.",
+      source: "Texas DSHS Health Professional Shortage Area Designations.",
+    },
+    specialty: {
+      headline: "13%",
+      label: "Adults without reliable transportation · Dallas County",
+      details: [
+        "Distance to the nearest verified eye-care provider: not calculated.",
+        "Provider counts by tract, travel times, and confirmed AI screening locations: not established.",
+      ],
+      caveat: "County-level transportation statistic only; it does not measure tract-level specialty-care access.",
+      source: "Texas Health Resources 2025 Community Health Needs Assessment, as summarized in the research PDF.",
+    },
+    clinics: {
+      headline: "6 locations",
+      label: "Research-listed healthcare facilities",
+      details: [
+        "3 retina specialty clinics and 3 community health centers.",
+        "AI-based diabetic eye screening availability is unverified at every location.",
+      ],
+      caveat: "Marker positions are approximate address points from the U.S. Census Geocoder.",
+      source: "Facility names and addresses from the research PDF; coordinates geocoded with the U.S. Census Geocoder.",
+    },
   };
-  const demoAreas = [
-    { name: "Northwest sample area", center: [32.94, -97.34], radius: 4800, burden: 0.35, svi: 0.72, shortage: 0.55, specialty: 0.35, filters: ["high-need", "limited-access"] },
-    { name: "Northeast sample area", center: [32.98, -96.73], radius: 4300, burden: 0.78, svi: 0.43, shortage: 0.75, specialty: 0.72, filters: ["high-need", "limited-access"] },
-    { name: "Central sample area", center: [32.78, -96.81], radius: 3900, burden: 0.55, svi: 0.82, shortage: 0.35, specialty: 0.58, filters: ["high-need", "care-nearby"] },
-    { name: "Southwest sample area", center: [32.69, -97.31], radius: 4600, burden: 0.82, svi: 0.65, shortage: 0.85, specialty: 0.32, filters: ["high-need", "limited-access"] },
-    { name: "Southeast sample area", center: [32.70, -96.72], radius: 4100, burden: 0.68, svi: 0.89, shortage: 0.65, specialty: 0.48, filters: ["high-need", "limited-access"] },
-    { name: "Mid-cities sample area", center: [32.83, -97.10], radius: 3700, burden: 0.38, svi: 0.35, shortage: 0.25, specialty: 0.82, filters: ["care-nearby"] },
-    { name: "North sample area", center: [33.08, -96.80], radius: 4300, burden: 0.25, svi: 0.22, shortage: 0.15, specialty: 0.88, filters: ["care-nearby"] },
-    { name: "West sample area", center: [32.75, -97.48], radius: 4000, burden: 0.48, svi: 0.52, shortage: 0.58, specialty: 0.42, filters: ["limited-access"] },
-  ];
-  const demoClinics = [
-    { name: "Sample clinic — Dallas", position: [32.80, -96.84] },
-    { name: "Sample clinic — Fort Worth", position: [32.75, -97.33] },
-    { name: "Sample clinic — Plano", position: [33.02, -96.70] },
-    { name: "Sample clinic — Arlington", position: [32.74, -97.10] },
-    { name: "Sample clinic — Irving", position: [32.86, -96.96] },
+  const facilities = [
+    {
+      name: "Retina Center of Texas",
+      address: "12222 N Central Expy, Suite 250, Dallas, TX 75243",
+      position: [32.915553722799, -96.766886379761],
+      type: "Retina specialty clinic",
+      category: "specialty",
+      detail: "Provides care for diabetic retinopathy and other retinal conditions.",
+    },
+    {
+      name: "Retina Specialists",
+      address: "10740 N Central Expy, Suite 100, Dallas, TX 75231",
+      position: [32.893856995433, -96.768663372336],
+      type: "Retina specialty clinic",
+      category: "specialty",
+      detail: "Provides medical and surgical retinal care, including diabetic retinopathy.",
+    },
+    {
+      name: "Retina of North Texas",
+      address: "11615 Forest Central Dr, Suite 308, Dallas, TX 75243",
+      position: [32.907175582769, -96.767176601088],
+      type: "Retina specialty clinic",
+      category: "specialty",
+      detail: "Treats diabetic retinopathy and other retinal conditions.",
+    },
+    {
+      name: "HHM Health at South Dallas",
+      address: "3639 Holmes St, Dallas, TX 75215",
+      position: [32.756479168474, -96.773393705889],
+      type: "Community health center",
+      category: "community",
+      detail: "Community-based healthcare.",
+    },
+    {
+      name: "LBU Community Clinic, West Dallas",
+      address: "809 Singleton Blvd, Dallas, TX 75212",
+      position: [32.778608846664, -96.836452415411],
+      type: "Community health center",
+      category: "community",
+      detail: "Primary and preventive healthcare services.",
+    },
+    {
+      name: "Texas Native Health",
+      address: "1283 Record Crossing Rd, Dallas, TX 75235",
+      position: [32.815810725137, -96.861117170878],
+      type: "Community health center",
+      category: "community",
+      detail: "Community-based health services.",
+    },
   ];
   const activeLayers = new Set(["diabetes"]);
-  const activeFilters = new Set();
 
   if (!window.L) {
     document.getElementById("map").innerHTML =
@@ -46,17 +128,8 @@
   }).addTo(map);
   L.control.zoom({ position: "bottomright" }).addTo(map);
 
-  const areaLayer = L.layerGroup().addTo(map);
   const clinicLayer = L.layerGroup();
-  const markers = [];
   let toastTimer;
-
-  function areaColor(value, palette) {
-    const colors = layerColors[palette];
-    if (value < 0.34) return colors[0];
-    if (value < 0.67) return colors[1];
-    return colors[2];
-  }
 
   function showToast(message) {
     const toast = document.getElementById("map-toast");
@@ -67,42 +140,48 @@
   }
 
   function activeDataLayer() {
-    return ["diabetes", "svi", "shortage", "specialty"].find((layer) => activeLayers.has(layer));
+    if (activeLayers.has("clinics")) return "clinics";
+    return summaryLayers.find((layer) => activeLayers.has(layer));
   }
 
-  function renderAreas() {
-    areaLayer.clearLayers();
-    const dataLayer = activeDataLayer();
-    const visibleAreas = demoAreas.filter((area) =>
-      Array.from(activeFilters).every((filter) => area.filters.includes(filter)),
-    );
+  function addTextElement(parent, tagName, className, text) {
+    const element = document.createElement(tagName);
+    if (className) element.className = className;
+    element.textContent = text;
+    parent.append(element);
+    return element;
+  }
 
-    visibleAreas.forEach((area) => {
-      if (dataLayer) {
-        const value = area[dataLayer];
-        const circle = L.circle(area.center, {
-          radius: area.radius,
-          color: areaColor(value, dataLayer),
-          weight: 1,
-          opacity: 0.65,
-          fillColor: areaColor(value, dataLayer),
-          fillOpacity: 0.3 + value * 0.2,
-        });
-        circle.bindPopup(`<strong>${area.name}</strong><br>${layerNames[dataLayer]}: illustrative demo value`);
-        areaLayer.addLayer(circle);
-      }
-    });
+  function renderResearchCard() {
+    const card = document.getElementById("research-content");
+    const layer = activeDataLayer();
+    card.replaceChildren();
 
-    markers.forEach(({ marker, area }) => {
-      marker.setOpacity(visibleAreas.includes(area) ? 1 : 0.25);
-    });
-    document.getElementById("visible-count").textContent = String(visibleAreas.length);
-    document.getElementById("legend-layer").textContent = dataLayer
-      ? layerNames[dataLayer]
-      : "Select an area layer";
-    document.querySelector(".legend-swatch").style.background = dataLayer
-      ? `linear-gradient(90deg, ${layerColors[dataLayer].join(", ")})`
-      : "#d9e2df";
+    if (!layer) {
+      addTextElement(card, "p", "research-empty", "Select a layer to view the available research data.");
+      return;
+    }
+
+    const facts = layerFacts[layer];
+    addTextElement(card, "strong", "research-metric", facts.headline);
+    addTextElement(card, "p", "research-label", facts.label);
+
+    if (facts.details.length) {
+      const details = document.createElement("ul");
+      details.className = "research-details";
+      facts.details.forEach((detail) => addTextElement(details, "li", "", detail));
+      card.append(details);
+    }
+
+    addTextElement(card, "p", "research-caveat", facts.caveat);
+    addTextElement(card, "p", "research-source", `Source: ${facts.source}`);
+  }
+
+  function renderMapState() {
+    const clinicsVisible = activeLayers.has("clinics");
+    document.getElementById("visible-count").textContent = clinicsVisible ? String(facilities.length) : "0";
+    document.getElementById("legend-layer").textContent = layerNames[activeDataLayer()] || "Select a layer";
+    renderResearchCard();
   }
 
   function toggleLayer(layer, enabled) {
@@ -115,32 +194,30 @@
       document.querySelector(".clinics-legend").classList.toggle("is-visible", enabled);
     }
 
-    renderAreas();
-    if (enabled && !["clinics", ...Object.keys(layerColors)].includes(layer)) {
-      showToast("This layer is ready for research data.");
-    }
+    renderMapState();
   }
 
-  demoClinics.forEach((clinic, index) => {
-    const marker = L.marker(clinic.position, {
+  facilities.forEach((facility) => {
+    const marker = L.marker(facility.position, {
       icon: L.divIcon({
         className: "",
-        html: '<span class="sample-marker">+</span>',
+        html: `<span class="facility-marker facility-marker--${facility.category}" aria-hidden="true">${facility.category === "specialty" ? "+" : "●"}</span>`,
         iconSize: [30, 30],
         iconAnchor: [15, 15],
       }),
     });
-    marker.bindPopup(`<strong>${clinic.name}</strong><br><small>Illustrative placeholder location</small>`);
+    marker.bindPopup(
+      `<strong>${facility.name}</strong><br><small>${facility.type}</small><br>${facility.address}<br>${facility.detail}<br><small>AI screening availability: Unknown</small>`,
+    );
     clinicLayer.addLayer(marker);
-    markers.push({ marker, area: demoAreas[[2, 5, 6, 5, 5][index]] });
   });
 
   document.querySelectorAll(".layer-row").forEach((button) => {
     button.addEventListener("click", () => {
       const layer = button.dataset.layer;
       const enabled = button.getAttribute("aria-pressed") !== "true";
-      if (enabled && Object.hasOwn(layerColors, layer)) {
-        Object.keys(layerColors).forEach((otherLayer) => {
+      if (enabled && summaryLayers.includes(layer)) {
+        summaryLayers.forEach((otherLayer) => {
           activeLayers.delete(otherLayer);
           const otherButton = document.querySelector(`[data-layer="${otherLayer}"]`);
           otherButton.setAttribute("aria-pressed", "false");
@@ -156,35 +233,15 @@
   document.getElementById("reset-layers").addEventListener("click", () => {
     activeLayers.clear();
     activeLayers.add("diabetes");
-    activeFilters.clear();
     document.querySelectorAll(".layer-row").forEach((button) => {
       const enabled = button.dataset.layer === "diabetes";
       button.setAttribute("aria-pressed", String(enabled));
       button.classList.toggle("is-active", enabled);
     });
-    document.querySelectorAll(".filter-chip").forEach((button) => button.setAttribute("aria-pressed", "false"));
     map.removeLayer(clinicLayer);
     document.querySelector(".clinics-legend").classList.remove("is-visible");
-    updateFilterCount();
-    renderAreas();
-    showToast("Map layers and filters reset.");
-  });
-
-  function updateFilterCount() {
-    document.getElementById("filter-count").textContent = `${activeFilters.size} active`;
-  }
-
-  document.querySelectorAll(".filter-chip").forEach((button) => {
-    button.addEventListener("click", () => {
-      const filter = button.dataset.filter;
-      const enabled = button.getAttribute("aria-pressed") !== "true";
-      button.setAttribute("aria-pressed", String(enabled));
-      if (enabled) activeFilters.add(filter);
-      else activeFilters.delete(filter);
-      updateFilterCount();
-      renderAreas();
-      if (enabled) showToast(`Showing areas matching all selected filters.`);
-    });
+    renderMapState();
+    showToast("Map layers reset.");
   });
 
   const searchInput = document.getElementById("map-search");
@@ -231,5 +288,5 @@
     }
   });
 
-  renderAreas();
+  renderMapState();
 })();
