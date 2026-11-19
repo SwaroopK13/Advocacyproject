@@ -413,7 +413,12 @@
     document.getElementById("svi-legend").classList.toggle("is-visible", californiaSviVisible);
     document.getElementById("svi-legend-title").textContent =
       californiaTractVisible ? "TRACT SVI" : "COUNTY SVI";
-    document.getElementById("svi-resolution").hidden = currentRegion !== "california";
+    document.getElementById("svi-resolution").hidden =
+      currentRegion !== "california" || !activeLayers.has("svi");
+    document.querySelector('[data-layer="svi"] .layer-copy small').textContent =
+      currentRegion === "california" && currentSviResolution === "tract"
+        ? "Census tract SVI percentiles"
+        : "County SVI percentiles";
     document.querySelectorAll(".resolution-button").forEach((button) => {
       const selected = button.dataset.resolution === currentSviResolution;
       button.setAttribute("aria-pressed", String(selected));
@@ -494,6 +499,13 @@
           "3,133 HRSA-listed locations";
         document.getElementById("region-name").textContent = "California";
         document.getElementById("region-detail").textContent = "United States";
+        document.getElementById("brand-region").textContent = "CALIFORNIA";
+        document.querySelector(".map-panel").setAttribute("aria-label", "Interactive map of California");
+        document.getElementById("map").setAttribute("aria-label", "Interactive map showing California");
+        document.getElementById("map-search").placeholder = "Search California";
+        document.getElementById("map-search").setAttribute("aria-label", "Search a place in California");
+        document.getElementById("locate-dfw").setAttribute("aria-label", "Zoom to California");
+        document.getElementById("locate-dfw").title = "Zoom to California";
       } else {
         currentSviResolution = "county";
         activeLayers.add("diabetes");
@@ -504,6 +516,13 @@
           "6 research-listed locations";
         document.getElementById("region-name").textContent = "Dallas–Fort Worth";
         document.getElementById("region-detail").textContent = "Texas, United States";
+        document.getElementById("brand-region").textContent = "DALLAS–FORT WORTH";
+        document.querySelector(".map-panel").setAttribute("aria-label", "Interactive map of the Dallas–Fort Worth area");
+        document.getElementById("map").setAttribute("aria-label", "Interactive map showing the Dallas–Fort Worth area");
+        document.getElementById("map-search").placeholder = "Search DFW area";
+        document.getElementById("map-search").setAttribute("aria-label", "Search a place in DFW");
+        document.getElementById("locate-dfw").setAttribute("aria-label", "Zoom to Dallas–Fort Worth");
+        document.getElementById("locate-dfw").title = "Zoom to DFW";
       }
 
       document.querySelectorAll(".layer-row").forEach((layerButton) => {
@@ -517,6 +536,13 @@
       renderMapState();
       showToast(currentRegion === "california" ? "Loading California census tract SVI." : "Showing Dallas–Fort Worth.");
     });
+  });
+
+  document.getElementById("home-link").addEventListener("click", (event) => {
+    event.preventDefault();
+    document.querySelector('[data-region="dfw"]').click();
+    document.getElementById("reset-layers").click();
+    window.scrollTo({ top: 0, behavior: "smooth" });
   });
 
   document.querySelectorAll(".resolution-button").forEach((button) => {
