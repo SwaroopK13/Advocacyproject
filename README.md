@@ -1,6 +1,6 @@
-# DFW Health Atlas
+# Regional Health Atlas
 
-A responsive, interactive map prototype for exploring diabetes burden, social vulnerability, clinic locations, shortage areas, and specialty access across Dallas–Fort Worth.
+A responsive, interactive map prototype for exploring Dallas–Fort Worth health indicators and California county social vulnerability.
 
 ## Run locally
 
@@ -20,3 +20,5 @@ Then visit `http://localhost:8000`.
 - Facility markers use approximate address points returned by the U.S. Census Geocoder. The research brief does not confirm AI-based diabetic eye screening at any facility.
 - Primary-care shortage boundaries, tract-level diabetes and SVI data, and calculated specialty-care travel distances require the corresponding source datasets before those spatial layers can be mapped.
 - Reset restores the diabetes summary and hides the clinic markers.
+- California mode provides population-weighted county SVI overall means from the CDC/ATSDR SVI 2022 dataset. County boundaries are bundled locally and require no external geospatial API.
+- California mode includes 3,133 HRSA health center locations from the supplied workbook. Most screening fields remain unknown; markers and popups are clearly labeled as unverified source data rather than confirmed care claims.

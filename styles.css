@@ -59,6 +59,9 @@ button:focus-visible, input:focus-visible, a:focus-visible {
 .live-dot { width: 7px; height: 7px; border-radius: 50%; background: #49a495; box-shadow: 0 0 0 3px #e5f3ef; }
 .intro h1 { margin: 12px 0 9px; font: 700 28px/1.2 "Manrope", sans-serif; letter-spacing: -1.2px; }
 .intro p { max-width: 295px; margin: 0; color: #75818b; font-size: 12px; line-height: 1.65; }
+.region-switch { display: flex; gap: 5px; margin-top: 13px; }
+.region-button { min-width: 68px; padding: 6px 9px; border: 1px solid #e5ebe9; border-radius: 7px; background: #fff; color: #75818b; font-size: 9px; font-weight: 700; cursor: pointer; }
+.region-button.is-active { border-color: #a7ccc4; background: #edf7f4; color: #27766d; }
 
 .section-heading { display: flex; align-items: center; justify-content: space-between; }
 .section-heading h2 { margin: 0; font-size: 13px; font-weight: 700; }
@@ -159,7 +162,8 @@ button:focus-visible, input:focus-visible, a:focus-visible {
 .status-count { text-align: center; }
 .status-count strong { color: #39877e; }
 
-.map-legend { position: absolute; z-index: 600; right: 18px; bottom: 21px; width: 225px; padding: 13px 14px; border: 1px solid #e8ebea; border-radius: 11px; background: #fff; box-shadow: 0 4px 18px rgb(35 50 50 / 10%); }
+.map-legend { display: none; position: absolute; z-index: 600; right: 18px; bottom: 21px; width: 225px; padding: 13px 14px; border: 1px solid #e8ebea; border-radius: 11px; background: #fff; box-shadow: 0 4px 18px rgb(35 50 50 / 10%); }
+.map-legend.is-visible { display: block; }
 .legend-title { display: flex; justify-content: space-between; align-items: center; margin-bottom: 11px; color: #8b969b; font-size: 8px; font-weight: 700; letter-spacing: 1px; }
 .demo-label { color: #b18c4d; font-size: 7px; letter-spacing: .5px; }
 .legend-row { display: grid; grid-template-columns: 26px 1fr; align-items: center; gap: 8px; color: #5c6970; font-size: 10px; }
@@ -169,6 +173,12 @@ button:focus-visible, input:focus-visible, a:focus-visible {
 .legend-item { display: none; margin-top: 10px; }
 .legend-item.is-visible { display: grid; }
 .legend-clinic { display: grid; width: 17px; height: 17px; place-items: center; border-radius: 50%; background: #4388b8; color: white; font-size: 15px; font-weight: 600; }
+.svi-gradient { height: 9px; border-radius: 5px; background: linear-gradient(90deg, #d7e9df 0%, #91bea7 35%, #e3c06f 68%, #bd625b 100%); }
+.svi-range { display: flex; justify-content: space-between; margin-top: 5px; color: #9aa3a9; font-size: 8px; }
+.clinic-legend-row { display: flex; align-items: center; gap: 8px; margin-top: 8px; color: #65737a; font-size: 9px; }
+.clinic-dot { width: 10px; height: 10px; border: 1px solid #fff; border-radius: 50%; box-shadow: 0 0 0 1px #ccd5d2; }
+.clinic-dot.reported { background: #c86d5a; }
+.clinic-dot.unknown { background: #34877f; }
 .map-attribution { position: absolute; z-index: 500; right: 5px; bottom: 3px; padding: 2px 4px; border-radius: 3px; background: #ffffffd9; color: #647179; font-size: 8px; }
 .map-attribution a { color: #3c718a; text-decoration: none; }
 .map-attribution a:hover { text-decoration: underline; }
