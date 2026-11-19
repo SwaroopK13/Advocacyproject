@@ -21,4 +21,5 @@ Then visit `http://localhost:8000`.
 - Primary-care shortage boundaries, tract-level diabetes and SVI data, and calculated specialty-care travel distances require the corresponding source datasets before those spatial layers can be mapped.
 - Reset restores the diabetes summary and hides the clinic markers.
 - California mode provides population-weighted county SVI overall means from the CDC/ATSDR SVI 2022 dataset. County boundaries are bundled locally and require no external geospatial API.
+- California mode also maps SVI by census tract: 9,041 tracts have a score and 68 population-zero tracts are shown as unavailable. Tract boundaries are simplified for web display and bundled locally.
 - California mode includes 3,133 HRSA health center locations from the supplied workbook. Most screening fields remain unknown; markers and popups are clearly labeled as unverified source data rather than confirmed care claims.

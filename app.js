@@ -72,6 +72,16 @@
       caveat: "County averages are not tract-level maps and should not be used alone to identify individuals or neighborhoods.",
       source: "CDC/ATSDR Social Vulnerability Index 2022, ACS 2018–2022.",
     },
+    "california-tract-svi": {
+      headline: "9,041 scored tracts",
+      label: "California census tracts with overall SVI values",
+      details: [
+        "68 additional tracts have no SVI score because source population data is unavailable.",
+        "Click a tract for its GEOID, county, score, and population.",
+      ],
+      caveat: "Tract-level percentiles summarize communities; they do not describe individuals or establish causation.",
+      source: "CDC/ATSDR SVI 2022, ACS 2018–2022; boundaries from U.S. Census TIGERweb.",
+    },
     "california-clinics": {
       headline: "3,133 locations",
       label: "HRSA health center sites in California",
@@ -147,6 +157,7 @@
     "06101": 0.646, "06103": 0.609, "06105": 0.574, "06107": 0.692, "06109": 0.462,
     "06111": 0.440, "06113": 0.454, "06115": 0.575,
   };
+  let currentSviResolution = "county";
   let currentRegion = "dfw";
   const activeLayers = new Set(["diabetes"]);
 
@@ -229,6 +240,44 @@
       });
     },
   });
+  let californiaTractsLoaded = false;
+  let californiaTractsLoading = false;
+  const californiaTractSviLayer = L.geoJson(null, {
+    renderer: L.canvas({ padding: 0.3 }),
+    style(feature) {
+      const value = feature.properties.s;
+      return {
+        fillColor: sviColor(value),
+        fillOpacity: value == null ? 0.45 : 0.72,
+        color: "#ffffff",
+        opacity: 0.6,
+        weight: 0.25,
+      };
+    },
+    onEachFeature(feature, tractLayer) {
+      const properties = feature.properties;
+      const popup = document.createElement("div");
+      const title = document.createElement("strong");
+      title.textContent = `Census tract ${properties.g}`;
+      popup.append(title);
+      const county = document.createElement("div");
+      county.textContent = properties.c;
+      popup.append(county);
+      const score = document.createElement("small");
+      score.textContent =
+        properties.s == null
+          ? "Overall SVI: Not available (no population data)"
+          : `Overall SVI percentile: ${Number(properties.s).toFixed(4)}`;
+      popup.append(document.createElement("br"), score);
+      const population = document.createElement("small");
+      population.textContent = `Population: ${Number(properties.p).toLocaleString()}`;
+      popup.append(document.createElement("br"), population);
+      const source = document.createElement("small");
+      source.textContent = "CDC/ATSDR SVI 2022";
+      popup.append(document.createElement("br"), source);
+      tractLayer.bindPopup(popup);
+    },
+  });
   fetch("data/california-counties.geojson")
     .then((response) => {
       if (!response.ok) throw new Error(`County boundary request failed: ${response.status}`);
@@ -249,11 +298,56 @@
     toastTimer = window.setTimeout(() => toast.classList.remove("is-visible"), 2800);
   }
 
+  function updateCaliforniaSviLayer() {
+    const showSvi = currentRegion === "california" && activeLayers.has("svi");
+    if (!showSvi) {
+      map.removeLayer(californiaSviLayer);
+      map.removeLayer(californiaTractSviLayer);
+      return;
+    }
+
+    if (currentSviResolution === "county") {
+      map.removeLayer(californiaTractSviLayer);
+      californiaSviLayer.addTo(map);
+      return;
+    }
+
+    map.removeLayer(californiaSviLayer);
+    if (californiaTractsLoaded) {
+      californiaTractSviLayer.addTo(map);
+      return;
+    }
+    if (californiaTractsLoading) return;
+
+    californiaTractsLoading = true;
+    fetch("data/california-tract-svi.geojson")
+      .then((response) => {
+        if (!response.ok) throw new Error(`California tract SVI request failed: ${response.status}`);
+        return response.json();
+      })
+      .then((geojson) => {
+        californiaTractSviLayer.addData(geojson);
+        californiaTractsLoaded = true;
+        if (currentRegion === "california" && activeLayers.has("svi") && currentSviResolution === "tract") {
+          californiaTractSviLayer.addTo(map);
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        showToast("California census tract SVI data could not be loaded.");
+      })
+      .finally(() => {
+        californiaTractsLoading = false;
+      });
+  }
+
   function activeDataLayer() {
     if (activeLayers.has("clinics")) {
       return currentRegion === "california" ? "california-clinics" : "clinics";
     }
-    if (currentRegion === "california" && activeLayers.has("svi")) return "california-svi";
+    if (currentRegion === "california" && activeLayers.has("svi")) {
+      return currentSviResolution === "tract" ? "california-tract-svi" : "california-svi";
+    }
     return summaryLayers.find((layer) => activeLayers.has(layer));
   }
 
@@ -301,19 +395,30 @@
   function renderMapState() {
     const clinicsVisible = activeLayers.has("clinics");
     const californiaSviVisible = currentRegion === "california" && activeLayers.has("svi");
+    const californiaTractVisible = californiaSviVisible && currentSviResolution === "tract";
     document.getElementById("visible-count").textContent =
       clinicsVisible
         ? String(currentRegion === "california" ? californiaClinicCount : facilities.length)
-        : californiaSviVisible ? "58" : "0";
+        : californiaSviVisible ? (californiaTractVisible ? "9,109" : "58") : "0";
     document.getElementById("visible-label").textContent =
-      clinicsVisible ? "provider sites" : californiaSviVisible ? "county areas" : "active areas";
+      clinicsVisible
+        ? "provider sites"
+        : californiaTractVisible ? "census tracts" : californiaSviVisible ? "county areas" : "active areas";
     document.getElementById("legend-layer").textContent =
       currentRegion === "california" && activeLayers.has("svi")
-        ? "California SVI"
+        ? `California ${currentSviResolution} SVI`
         : currentRegion === "california" && activeLayers.has("clinics")
           ? "California clinics"
         : layerNames[activeDataLayer()] || "Select a layer";
     document.getElementById("svi-legend").classList.toggle("is-visible", californiaSviVisible);
+    document.getElementById("svi-legend-title").textContent =
+      californiaTractVisible ? "TRACT SVI" : "COUNTY SVI";
+    document.getElementById("svi-resolution").hidden = currentRegion !== "california";
+    document.querySelectorAll(".resolution-button").forEach((button) => {
+      const selected = button.dataset.resolution === currentSviResolution;
+      button.setAttribute("aria-pressed", String(selected));
+      button.classList.toggle("is-active", selected);
+    });
     document.getElementById("clinic-legend").classList.toggle(
       "is-visible",
       currentRegion === "california" && clinicsVisible,
@@ -325,11 +430,8 @@
     if (enabled) activeLayers.add(layer);
     else activeLayers.delete(layer);
 
-    if (layer === "svi" && currentRegion === "california") {
-      if (enabled) californiaSviLayer.addTo(map);
-      else map.removeLayer(californiaSviLayer);
-    } else if (layer === "svi") {
-      map.removeLayer(californiaSviLayer);
+    if (layer === "svi") {
+      updateCaliforniaSviLayer();
     }
 
     if (layer === "clinics") {
@@ -380,18 +482,20 @@
       map.removeLayer(clinicLayer);
       map.removeLayer(californiaClinicLayer);
       map.removeLayer(californiaSviLayer);
+      map.removeLayer(californiaTractSviLayer);
 
       if (currentRegion === "california") {
+        currentSviResolution = "tract";
         activeLayers.add("svi");
-        californiaSviLayer.addTo(map);
         map.setView([37.25, -119.5], 6);
         document.querySelector(".intro p").textContent =
-          "Explore 2022 county-level Social Vulnerability Index values across California.";
+          "Explore county or census-tract Social Vulnerability Index values across California.";
         document.querySelector('[data-layer="clinics"] .layer-copy small').textContent =
           "3,133 HRSA-listed locations";
         document.getElementById("region-name").textContent = "California";
         document.getElementById("region-detail").textContent = "United States";
       } else {
+        currentSviResolution = "county";
         activeLayers.add("diabetes");
         map.setView(center, 10);
         document.querySelector(".intro p").textContent =
@@ -407,10 +511,19 @@
         layerButton.setAttribute("aria-pressed", String(enabled));
         layerButton.classList.toggle("is-active", enabled);
       });
+      updateCaliforniaSviLayer();
       document.querySelector(".clinics-legend").classList.remove("is-visible");
       document.getElementById("clinic-legend").classList.remove("is-visible");
       renderMapState();
-      showToast(currentRegion === "california" ? "Showing California county SVI." : "Showing Dallas–Fort Worth.");
+      showToast(currentRegion === "california" ? "Loading California census tract SVI." : "Showing Dallas–Fort Worth.");
+    });
+  });
+
+  document.querySelectorAll(".resolution-button").forEach((button) => {
+    button.addEventListener("click", () => {
+      currentSviResolution = button.dataset.resolution;
+      updateCaliforniaSviLayer();
+      renderMapState();
     });
   });
 
@@ -442,8 +555,7 @@
     });
     map.removeLayer(clinicLayer);
     map.removeLayer(californiaClinicLayer);
-    if (currentRegion === "california") californiaSviLayer.addTo(map);
-    else map.removeLayer(californiaSviLayer);
+    updateCaliforniaSviLayer();
     document.querySelector(".clinics-legend").classList.remove("is-visible");
     document.getElementById("clinic-legend").classList.remove("is-visible");
     renderMapState();

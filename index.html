@@ -49,6 +49,11 @@
             <button type="button" class="region-button is-active" data-region="dfw" aria-pressed="true">DFW</button>
             <button type="button" class="region-button" data-region="california" aria-pressed="false">California</button>
           </div>
+          <div class="svi-resolution" id="svi-resolution" aria-label="California SVI map detail" hidden>
+            <span>SVI detail</span>
+            <button type="button" class="resolution-button" data-resolution="county" aria-pressed="false">County</button>
+            <button type="button" class="resolution-button is-active" data-resolution="tract" aria-pressed="true">Census tract</button>
+          </div>
         </section>
 
         <div class="section-heading">
@@ -94,7 +99,7 @@
           <h2>Quick filters</h2>
           <span class="filter-count" id="filter-count">Unavailable</span>
         </div>
-        <p class="section-hint filter-unavailable">Area filters need tract-level records, which are not included in the research PDF.</p>
+        <p class="section-hint filter-unavailable">Quick filters are not yet available; DFW tract-level records are not included in the research PDF.</p>
         <div class="filter-chips" id="filter-chips">
           <button type="button" class="filter-chip" data-filter="high-need" aria-pressed="false" disabled>
             <span class="chip-dot coral"></span>High need
@@ -153,7 +158,7 @@
         </div>
 
         <div class="map-legend" id="svi-legend" aria-label="California SVI legend">
-          <div class="legend-title"><span>COUNTY SVI</span><span class="demo-label">2022</span></div>
+          <div class="legend-title"><span id="svi-legend-title">TRACT SVI</span><span class="demo-label">2022</span></div>
           <div class="svi-gradient"></div>
           <div class="svi-range"><span>Lower 0.0</span><span>Higher 1.0</span></div>
         </div>
